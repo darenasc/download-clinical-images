@@ -21,19 +21,8 @@ END_NUMBER = 3000
 DELAY_GRID = 10
 DELAY_IMAGE = 1.5
 
-options = webdriver.ChromeOptions()
-options.add_experimental_option(
-    "prefs",
-    {
-        "download.default_directory": "/Users/darenasc/Dropbox/Business Intelligence/Proyectos/covid-images/covid-images/src/data/images",  # Change default directory for downloads
-        # "download.prompt_for_download": False, #To auto download the file
-        # "download.directory_upgrade": True,
-        "plugins.always_open_pdf_externally": True,  # It will not show PDF directly in chrome
-    },
-)
 driver = webdriver.Chrome(
-    "/Users/darenasc/Dropbox/Business Intelligence/Proyectos/covid-images/covid-images/src/driver/chromedriver",
-    options=options,
+    ROOT_DIR / 'driver' / 'chromedriver',
 )
 
 def get_soup(html_source: str) -> BeautifulSoup:
