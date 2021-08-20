@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+import time
 
 from bs4 import BeautifulSoup
 import requests
@@ -25,6 +26,7 @@ END_NUMBER = 3200
 
 DELAY_GRID = 10
 DELAY_IMAGE = 5
+DELAY = 0.5
 
 driver = webdriver.Chrome(
     ROOT_DIR / "driver" / "chromedriver",
@@ -80,10 +82,11 @@ def get_grid_urls(url_search, start_number, end_number):
 
 
 def get_title(soup):
-    title = """"""
-    for item in soup.find_all(class_="title"):
-        title += item.get_text() + "\n"
-    return title
+    return (
+        soup.find(class_="col-sm-12 col-md-6 col-lg-6 left-side")
+        .find(class_="title")
+        .get_text()
+    )
 
 
 def get_abstract(soup):
@@ -95,10 +98,39 @@ def get_abstract(soup):
     return text
 
 
+def get_figure_caption(soup):
+    text = """"""
+    for item in soup.find_all(class_="caption ng-scope"):
+        for line in item.get_text().split("\n"):
+            if len(line) > 0:
+                text += line + "\n"
+    return text
+
+
+def get_affiliation(soup):
+    text = """"""
+    for item in soup.find_all(class_="affiliation ng-scope"):
+        for line in item.get_text().split("\n"):
+            if len(line) > 0:
+                text += line + "\n"
+    return text
+
+
+def get_view_articles(soup):
+    urls = []
+    for item in soup.find_all(class_="view-article"):
+        for _ in item.find_all("a"):
+            urls.append(_.get("href"))
+    return urls
+
+
 def save_json(soup_image, files_folder, url):
     data = {
         "title": """{}""".format(get_title(soup_image)),
         "abstract": get_abstract(soup_image),
+        "figure_caption": get_figure_caption(soup_image),
+        "affiliation": get_affiliation(soup_image),
+        "view_articles": get_view_articles(soup_image),
     }
     filename = files_folder / "{}.json".format(url)
     with open(filename, "w+") as f:
@@ -126,6 +158,7 @@ def download_images(start_number: int, end_number: int, url_search: str = URL_SE
             WebDriverWait(driver, DELAY_IMAGE).until(
                 EC.presence_of_element_located((By.ID, "content"))
             )
+            time.sleep(DELAY)
             soup_image = get_soup(driver.page_source)
             url_ = URL_BASE + get_image_url(soup_image)
             download_image(url_, IMAGES_FOLDER, image_name)

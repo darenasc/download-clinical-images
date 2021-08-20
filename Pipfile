@@ -12,6 +12,7 @@ requests = "*"
 ipykernel = "*"
 selenium = "*"
 tqdm = "*"
+typer = "*"
 
 [requires]
 python_version = "3.8"
