@@ -105,6 +105,8 @@ for url_grid in tqdm(url_grids):
     image_names = get_image_urls(soup)
 
     for image_name in tqdm(image_names, leave = False):
+        if (IMAGES_FOLDER / str(image_name + '.png')).exists():
+            continue
         reload_page(URL_IMAGE.format(image_name))
         time.sleep(DELAY_IMAGE)
         soup_image = get_soup(driver.page_source)
