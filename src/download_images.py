@@ -124,15 +124,16 @@ def get_view_articles(soup):
     return urls
 
 
-def save_json(soup_image, files_folder, url):
+def save_json(soup_image, files_folder, image_name, url_image):
     data = {
         "title": """{}""".format(get_title(soup_image)),
         "abstract": get_abstract(soup_image),
         "figure_caption": get_figure_caption(soup_image),
         "affiliation": get_affiliation(soup_image),
         "view_articles": get_view_articles(soup_image),
+        "image_url": url_image,
     }
-    filename = files_folder / "{}.json".format(url)
+    filename = files_folder / "{}.json".format(image_name)
     with open(filename, "w+") as f:
         json.dump(data, f)
 
@@ -162,7 +163,9 @@ def download_images(start_number: int, end_number: int, url_search: str = URL_SE
             soup_image = get_soup(driver.page_source)
             url_ = URL_BASE + get_image_url(soup_image)
             download_image(url_, IMAGES_FOLDER, image_name)
-            save_json(soup_image, FILES_FOLDER, image_name)
+            save_json(
+                soup_image, FILES_FOLDER, image_name, URL_IMAGE.format(image_name)
+            )
 
     driver.close()
 
